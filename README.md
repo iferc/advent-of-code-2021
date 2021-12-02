@@ -117,3 +117,15 @@ cargo bench -p day01
 ```
 
 Note that `criterion`, the benchmarking library, can generate HTML reports with detailed graphs if `gnuplot` is installed. On Debian systems this would look like `apt install gnuplot`. This is not required to use this repository, but is fun to look at.
+
+These html reports are generated under the folder `target/criterion` from the root of the repository. One easy way to host the files for viewing is with the following utility via cargo not listed earlier in the readme.
+
+```sh
+# provides a quick way to serve files for viewing in a web browser
+cargo install https
+
+# launch the server for the criterion benchmarking report
+http ./target/criterion
+```
+
+From there you can navigate to [http://localhost:8000/report](http://localhost:8000/report).
