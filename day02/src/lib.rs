@@ -1,6 +1,13 @@
 pub mod first;
 pub mod second;
 
+#[derive(Default)]
+pub struct Position {
+    pub depth: usize,
+    pub horizontal: usize,
+    pub aim: usize,
+}
+
 pub enum Movement {
     Forward(usize),
     Up(usize),
