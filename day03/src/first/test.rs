@@ -1,7 +1,7 @@
 #[test]
 pub fn example() {
     let input = include_str!("../../data/example.txt");
-    let output = usize::MAX;
+    let output = 198;
 
     let result = super::challenge(input).expect("challenge threw an error");
 
