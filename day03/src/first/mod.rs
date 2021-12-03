@@ -1,7 +1,7 @@
 #[cfg(test)]
 pub mod test;
 
-use eyre::Result as EyreResult;
+use eyre::{eyre, Result as EyreResult};
 
 pub struct Thing {}
 
@@ -11,15 +11,20 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
         .map(|line| {
             line.chars()
                 .map(|ch| match ch {
-                    '0' => 0,
-                    '1' => 1,
-                    _ => panic!("omg, we've been betrayed by the input!!!"),
+                    '0' => Ok(0),
+                    '1' => Ok(1),
+                    _ => Err(eyre!("omg, we've been betrayed by the input!!!")),
                 })
-                .collect::<Vec<usize>>()
+                .collect::<Result<Vec<usize>, _>>()
         })
-        .collect::<Vec<_>>();
+        .collect::<Result<Vec<_>, _>>()?;
 
     let total_lines = lines.len();
+
+    if total_lines == 0 {
+        return Err(eyre!("No lines givens, dafuq bro?"));
+    }
+
     let line_length = lines[0].len();
     let mut sums: Vec<usize> = (0..line_length).map(|_| 0).collect::<Vec<_>>();
 
