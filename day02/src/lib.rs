@@ -1,6 +1,8 @@
 pub mod first;
 pub mod second;
 
+use eyre::{eyre, Result as EyreResult};
+
 #[derive(Default)]
 pub struct Position {
     pub depth: usize,
@@ -8,6 +10,79 @@ pub struct Position {
     pub aim: usize,
 }
 
+#[derive(Default)]
+pub struct Submarine {
+    pub position: Position,
+}
+
+impl Submarine {
+    pub fn naive_movement<M>(self, movements: Vec<M>) -> EyreResult<Self>
+    where
+        M: TryInto<Movement>,
+        M::Error: std::fmt::Debug,
+    {
+        Ok(Self {
+            position: movements
+                .into_iter()
+                .fold(Ok(self.position), |position, movement| {
+                    if let Ok(mut position) = position {
+                        match movement.try_into() {
+                            Ok(Movement::Forward(amount)) => {
+                                position.horizontal += amount;
+                                Ok(position)
+                            }
+                            Ok(Movement::Up(amount)) => {
+                                position.depth -= amount;
+                                Ok(position)
+                            }
+                            Ok(Movement::Down(amount)) => {
+                                position.depth += amount;
+                                Ok(position)
+                            }
+                            Err(error) => Err(eyre!("{:?}", error)),
+                        }
+                    } else {
+                        position
+                    }
+                })?,
+        })
+    }
+
+    pub fn aiming_movement<M>(self, movements: Vec<M>) -> EyreResult<Self>
+    where
+        M: TryInto<Movement>,
+        M::Error: std::fmt::Debug,
+    {
+        Ok(Self {
+            position: movements
+                .into_iter()
+                .fold(Ok(self.position), |position, movement| {
+                    if let Ok(mut position) = position {
+                        match movement.try_into() {
+                            Ok(Movement::Forward(amount)) => {
+                                position.horizontal += amount;
+                                position.depth += amount * position.aim;
+                                Ok(position)
+                            }
+                            Ok(Movement::Up(amount)) => {
+                                position.aim -= amount;
+                                Ok(position)
+                            }
+                            Ok(Movement::Down(amount)) => {
+                                position.aim += amount;
+                                Ok(position)
+                            }
+                            Err(error) => Err(eyre!("{:?}", error)),
+                        }
+                    } else {
+                        position
+                    }
+                })?,
+        })
+    }
+}
+
+#[derive(Clone)]
 pub enum Movement {
     Forward(usize),
     Up(usize),
