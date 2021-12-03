@@ -19,39 +19,32 @@ impl Submarine {
     pub fn naive_movement<M>(self, movements: Vec<M>) -> EyreResult<Self>
     where
         M: TryInto<Movement>,
-        M::Error: std::fmt::Debug,
+        M::Error: std::fmt::Display,
     {
-        Ok(Self {
-            position: movements
-                .into_iter()
-                .fold(Ok(self.position), |position, movement| {
-                    if let Ok(mut position) = position {
-                        match movement.try_into() {
-                            Ok(Movement::Forward(amount)) => {
-                                position.horizontal += amount;
-                                Ok(position)
-                            }
-                            Ok(Movement::Up(amount)) => {
-                                position.depth -= amount;
-                                Ok(position)
-                            }
-                            Ok(Movement::Down(amount)) => {
-                                position.depth += amount;
-                                Ok(position)
-                            }
-                            Err(error) => Err(eyre!("{:?}", error)),
-                        }
-                    } else {
-                        position
-                    }
-                })?,
-        })
+        let mut position = self.position;
+
+        for movement in movements {
+            match movement.try_into() {
+                Ok(Movement::Forward(amount)) => {
+                    position.horizontal += amount;
+                }
+                Ok(Movement::Up(amount)) => {
+                    position.depth -= amount;
+                }
+                Ok(Movement::Down(amount)) => {
+                    position.depth += amount;
+                }
+                Err(error) => return Err(eyre!("{}", error)),
+            }
+        }
+
+        Ok(Self { position })
     }
 
     pub fn aiming_movement<M>(self, movements: Vec<M>) -> EyreResult<Self>
     where
         M: TryInto<Movement>,
-        M::Error: std::fmt::Debug,
+        M::Error: std::fmt::Display,
     {
         Ok(Self {
             position: movements
@@ -72,7 +65,7 @@ impl Submarine {
                                 position.aim += amount;
                                 Ok(position)
                             }
-                            Err(error) => Err(eyre!("{:?}", error)),
+                            Err(error) => Err(eyre!("{}", error)),
                         }
                     } else {
                         position
