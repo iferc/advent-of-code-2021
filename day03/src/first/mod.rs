@@ -17,31 +17,31 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
         })
         .collect::<Result<Vec<_>, _>>()?;
 
-    if lines.len() == 0 {
+    let total_rows = lines.len();
+    if total_rows == 0 {
         return Err(eyre!("no input give"));
     }
 
-    let line_length = lines[0].len();
-    let mut sums: Vec<usize> = (0..line_length).map(|_| 0).collect::<Vec<_>>();
+    let pivoted_bits = crate::pivot_iter::collect_pivoted(lines);
+    let total_columns = pivoted_bits.len();
+    let sums = pivoted_bits
+        .iter()
+        .map(|col| col.iter().sum::<usize>())
+        .collect::<Vec<_>>();
 
-    for line in &lines {
-        for (index, value) in line.iter().enumerate() {
-            sums[index] += value;
-        }
+    let mut majority_high_bits: Vec<_> = Vec::with_capacity(total_columns);
+    for sum in sums {
+        majority_high_bits.push(if sum * 2 > total_rows { 1 } else { 0 });
     }
 
-    let mut gamma_bits = (0..line_length).map(|_| 0).collect::<Vec<_>>();
-    for (index, sum) in sums.iter().enumerate() {
-        gamma_bits[index] = if sum * 2 > lines.len() { 1 } else { 0 };
-    }
-
+    // array of binary digits to final values
     let mut gamma = 0;
     let mut epsilon = 0;
     let mut pow = 1;
-    for gamma_bit in gamma_bits.into_iter().rev() {
+    for gamma_bit in majority_high_bits.into_iter().rev() {
         gamma += pow * gamma_bit;
         epsilon += pow * if gamma_bit == 1 { 0 } else { 1 };
-        pow *= 2usize;
+        pow *= 2;
     }
 
     Ok(gamma * epsilon)
