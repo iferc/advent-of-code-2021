@@ -11,7 +11,7 @@ pub fn example() {
 #[test]
 pub fn challenge() {
     let input = include_str!("../../data/challenge.txt");
-    let output = 2498354;
+    let output = 2_498_354;
 
     let result = super::challenge(input).expect("challenge threw an error");
 

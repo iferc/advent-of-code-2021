@@ -30,16 +30,18 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
         }
     }
 
-    let mut gamma_bits = (0..line_length).map(|_| false).collect::<Vec<_>>();
+    let mut gamma_bits = (0..line_length).map(|_| 0).collect::<Vec<_>>();
     for (index, sum) in sums.iter().enumerate() {
-        gamma_bits[index] = sum * 2 > lines.len();
+        gamma_bits[index] = if sum * 2 > lines.len() { 1 } else { 0 };
     }
 
     let mut gamma = 0;
     let mut epsilon = 0;
-    for (index, gamma_bit) in gamma_bits.iter().rev().enumerate() {
-        gamma += 2usize.pow(index as u32) * if *gamma_bit { 1 } else { 0 };
-        epsilon += 2usize.pow(index as u32) * if *gamma_bit { 0 } else { 1 };
+    let mut pow = 1;
+    for gamma_bit in gamma_bits.into_iter().rev() {
+        gamma += pow * gamma_bit;
+        epsilon += pow * if gamma_bit == 1 { 0 } else { 1 };
+        pow *= 2usize;
     }
 
     Ok(gamma * epsilon)
