@@ -22,9 +22,9 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
         return Err(eyre!("no input give"));
     }
 
-    let pivoted_bits = crate::pivot_iter::collect_pivoted(lines);
-    let total_columns = pivoted_bits.len();
-    let sums = pivoted_bits
+    let transposed_bits = crate::collect_transpose::collect_transposed(lines);
+    let total_columns = transposed_bits.len();
+    let sums = transposed_bits
         .iter()
         .map(|col| col.iter().sum::<usize>())
         .collect::<Vec<_>>();

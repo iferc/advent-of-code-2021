@@ -30,8 +30,8 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
     let mut char_position = 0;
     while oxygen_lines.len() > 1 {
         let total_rows = oxygen_lines.len();
-        let pivoted_bits = crate::pivot_iter::collect_pivoted(oxygen_lines.clone());
-        let total_columns = pivoted_bits.len();
+        let transposed_bits = crate::collect_transpose::collect_transposed(oxygen_lines.clone());
+        let total_columns = transposed_bits.len();
 
         if total_columns < char_position {
             return Err(eyre!(
@@ -39,7 +39,7 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
             ));
         }
 
-        let sums = pivoted_bits
+        let sums = transposed_bits
             .iter()
             .map(|col| col.iter().sum::<usize>())
             .collect::<Vec<_>>();
@@ -73,8 +73,8 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
     let mut char_position = 0;
     while scrubber_lines.len() > 1 {
         let total_rows = scrubber_lines.len();
-        let pivoted_bits = crate::pivot_iter::collect_pivoted(scrubber_lines.clone());
-        let total_columns = pivoted_bits.len();
+        let transposed_bits = crate::collect_transpose::collect_transposed(scrubber_lines.clone());
+        let total_columns = transposed_bits.len();
 
         if total_columns < char_position {
             return Err(eyre!(
@@ -82,7 +82,7 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
             ));
         }
 
-        let sums = pivoted_bits
+        let sums = transposed_bits
             .iter()
             .map(|col| col.iter().sum::<usize>())
             .collect::<Vec<_>>();
