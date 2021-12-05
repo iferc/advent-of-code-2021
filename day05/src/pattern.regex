@@ -1,0 +1,22 @@
+(?x)
+
+# x component of first point
+(?P<a_x>\d+)
+
+# any whitespace around a comma
+\s*,\s*
+
+# y component of first point
+(?P<a_y>\d+)
+
+# any whitespace around an arrow
+\s*->\s*
+
+# x component of second point
+(?P<b_x>\d+)
+
+# any whitespace around a comma
+\s*,\s*
+
+# y component of second point
+(?P<b_y>\d+)
