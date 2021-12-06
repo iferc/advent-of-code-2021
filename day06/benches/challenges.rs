@@ -3,17 +3,19 @@ use day06::{first, second};
 
 fn first_challenge(c: &mut Criterion) {
     let input = include_str!("../data/challenge.txt");
+    let days = 256;
 
     c.bench_function("day 06 - challenge 1", |b| {
-        b.iter(|| first::challenge(black_box(input)))
+        b.iter(|| first::challenge(black_box(input), black_box(days)))
     });
 }
 
 fn second_challenge(c: &mut Criterion) {
     let input = include_str!("../data/challenge.txt");
+    let days = 256;
 
     c.bench_function("day 06 - challenge 2", |b| {
-        b.iter(|| second::challenge(black_box(input)))
+        b.iter(|| second::challenge(black_box(input), black_box(days)))
     });
 }
 
