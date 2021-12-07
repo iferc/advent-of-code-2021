@@ -7,12 +7,12 @@ pub fn mean(list: &Vec<usize>) -> usize {
     let total_items = list.len();
     let total = list.iter().sum::<usize>();
 
-    // rounding jank ftw
     total / total_items
 }
 
-pub fn fuel_calculation(n: usize) -> usize {
-    (n * (n + 1)) / 2
+pub fn fuel_calculation(crab_position: usize, new_position: usize) -> usize {
+    let difference = crab_position.abs_diff(new_position);
+    difference * (difference + 1) / 2
 }
 
 pub fn challenge(input: &str) -> EyreResult<usize> {
@@ -23,13 +23,10 @@ pub fn challenge(input: &str) -> EyreResult<usize> {
 
     let position = mean(&crab_submarines);
 
-    let fuel_cost = crab_submarines.into_iter().fold(0, |fuel, crab| {
-        if crab < position {
-            fuel + fuel_calculation(position - crab)
-        } else {
-            fuel + fuel_calculation(crab - position)
-        }
-    });
+    let fuel_cost = crab_submarines
+        .into_iter()
+        .map(|crab| fuel_calculation(crab, position))
+        .sum();
 
     Ok(fuel_cost)
 }

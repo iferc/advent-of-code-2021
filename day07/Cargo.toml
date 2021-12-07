@@ -16,3 +16,8 @@ criterion = "0.3"
 [[bench]]
 name = "challenges"
 harness = false
+
+# force this library to not be a part of the parent workspace
+# this is required because this library is using a nightly feature
+# and I don't want the whole repo to use nightly
+[workspace]
