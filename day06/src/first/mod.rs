@@ -1,8 +1,8 @@
 #[cfg(test)]
 pub mod test;
 
+use super::group_by::group_by;
 use eyre::Result as EyreResult;
-use itertools::Itertools;
 
 #[derive(Debug)]
 pub struct FishCollection {
@@ -10,32 +10,24 @@ pub struct FishCollection {
     count_of_fish: usize,
 }
 
-pub fn group_fishies_by_days_remaining(input: &str) -> EyreResult<Vec<FishCollection>> {
-    let mut unsorted_fish_days_remaining_until_next_birth = input
+pub fn parse_fish_days_until_birthing(input: &str) -> EyreResult<Vec<FishCollection>> {
+    let days_until_birthing = input
         .split(',')
         .map(|fish| fish.parse::<usize>())
         .collect::<Result<Vec<_>, _>>()?;
 
-    // this sort is required because itertools::group_by is weird
-    // worse yet, sort can't be chained 😢
-    unsorted_fish_days_remaining_until_next_birth.sort();
+    let grouped_by_days_until_birthing = group_by(days_until_birthing.into_iter(), |item| *item)
+        .map(|(days_until_birth, grouping_of_fish)| FishCollection {
+            days_until_birth,
+            count_of_fish: grouping_of_fish.len(),
+        })
+        .collect::<Vec<_>>();
 
-    let grouped_sorted_fish_days_remaining_until_next_birth =
-        unsorted_fish_days_remaining_until_next_birth
-            .into_iter()
-            .group_by(|elt| *elt)
-            .into_iter()
-            .map(|(days_until_birth, grouping_of_fish)| FishCollection {
-                days_until_birth,
-                count_of_fish: grouping_of_fish.count(),
-            })
-            .collect::<Vec<_>>();
-
-    Ok(grouped_sorted_fish_days_remaining_until_next_birth)
+    Ok(grouped_by_days_until_birthing)
 }
 
 pub fn challenge(input: &str, days: usize) -> EyreResult<usize> {
-    let mut fishies = group_fishies_by_days_remaining(input)?;
+    let mut fishies = parse_fish_days_until_birthing(input)?;
 
     for _day in 0..days {
         let mut births = 0;
@@ -53,6 +45,15 @@ pub fn challenge(input: &str, days: usize) -> EyreResult<usize> {
                 days_until_birth: 8,
                 count_of_fish: births,
             });
+
+            // regroup array to keep above iterations low rather than having better
+            // iteration logic that doesn't create new vec elements every birthing
+            fishies = group_by(fishies.into_iter(), |item| item.days_until_birth)
+                .map(|(days_until_birth, grouping_of_fish)| FishCollection {
+                    days_until_birth,
+                    count_of_fish: grouping_of_fish.len(),
+                })
+                .collect::<Vec<_>>();
         }
     }
 
