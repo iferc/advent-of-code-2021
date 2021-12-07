@@ -227,7 +227,14 @@ version = "0.1.0"
 dependencies = [
  "criterion",
  "eyre",
- "itertools",
+]
+
+[[package]]
+name = "day07"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "eyre",
 ]
 
 [[package]]

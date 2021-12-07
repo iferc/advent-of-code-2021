@@ -5,7 +5,7 @@ use eyre::Result as EyreResult;
 
 pub fn mean(list: &Vec<usize>) -> usize {
     let total_items = list.len();
-    let total = list.iter().fold(0, |total, item| total + *item);
+    let total = list.iter().sum::<usize>();
 
     // rounding jank ftw
     total / total_items
